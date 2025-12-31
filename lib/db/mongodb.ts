@@ -92,14 +92,16 @@ async function getDatabase(): Promise<Db> {
     await db.command({ ping: 1 });
     
     // Log successful secure connection
-    ErrorLogger.log(
-      new Error('Database connection established'),
-      ErrorType.INFO,
-      {
-        database: 'asalways',
-        timestamp: new Date().toISOString()
-      }
-    );
+    if (process.env.NODE_ENV === 'production') {
+      ErrorLogger.log(
+        new Error('Database connection established'),
+        ErrorType.INFO,
+        {
+          database: 'asalways',
+          timestamp: new Date().toISOString()
+        }
+      );
+    }
     
     console.log('Successfully connected to MongoDB Atlas with security validation');
     return db;
@@ -107,17 +109,19 @@ async function getDatabase(): Promise<Db> {
     const errorMessage = error?.message || error;
     
     // Enhanced error logging for security monitoring
-    ErrorLogger.log(
-      error instanceof Error ? error : new Error('Database connection failed'),
-      ErrorType.DATABASE,
-      {
-        errorMessage,
-        errorCode: error?.code,
-        errorName: error?.name,
-        connectionAttempt: true,
-        timestamp: new Date().toISOString()
-      }
-    );
+    if (process.env.NODE_ENV === 'production') {
+      ErrorLogger.log(
+        error instanceof Error ? error : new Error('Database connection failed'),
+        ErrorType.DATABASE,
+        {
+          errorMessage,
+          errorCode: error?.code,
+          errorName: error?.name,
+          connectionAttempt: true,
+          timestamp: new Date().toISOString()
+        }
+      );
+    }
     
     console.error('MongoDB connection failed:', {
       message: errorMessage,
@@ -231,27 +235,31 @@ export class DatabaseService {
       await db.collection<User>('users').insertOne(sanitizedData);
       
       // Log user creation for security audit
-      ErrorLogger.log(
-        new Error('User created'),
-        ErrorType.INFO,
-        { 
-          userId: sanitizedData._id.toString(),
-          email: sanitizedData.email,
-          role: sanitizedData.role,
-          timestamp: now.toISOString()
-        }
-      );
+      if (process.env.NODE_ENV === 'production') {
+        ErrorLogger.log(
+          new Error('User created'),
+          ErrorType.INFO,
+          {
+            userId: sanitizedData._id.toString(),
+            email: sanitizedData.email,
+            role: sanitizedData.role,
+            timestamp: now.toISOString()
+          }
+        );
+      }
       
       return castToType<User>(sanitizedData)!;
     } catch (error) {
-      ErrorLogger.log(
-        error instanceof Error ? error : new Error('User creation failed'),
-        ErrorType.DATABASE,
-        { 
-          email: validatedData.email,
-          error: error instanceof Error ? error.message : 'Unknown error'
-        }
-      );
+      if (process.env.NODE_ENV === 'production') {
+        ErrorLogger.log(
+          error instanceof Error ? error : new Error('User creation failed'),
+          ErrorType.DATABASE,
+          {
+            email: validatedData.email,
+            error: error instanceof Error ? error.message : 'Unknown error'
+          }
+        );
+      }
       throw new Error('Failed to create user');
     }
   }

@@ -100,7 +100,7 @@ export async function GET(request: NextRequest) {
     console.log('Google user info received:', { email: googleUser.email, name: googleUser.name })
 
     // Sanitize user data from Google
-    const sanitizedEmail = SecuritySanitizer.sanitizeString(googleUser.email)
+    const sanitizedEmail = googleUser.email.trim() // Just trim, zod will lowercase
     const sanitizedName = SecuritySanitizer.sanitizeString(googleUser.name)
 
     // Check if user exists

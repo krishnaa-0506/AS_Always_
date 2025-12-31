@@ -60,9 +60,9 @@ export async function POST(request: NextRequest) {
     })
 
     // Send welcome email (don't wait for it)
-    emailService.sendWelcomeEmail(email, name).catch(err => 
-      console.error('Welcome email failed:', err)
-    )
+    // emailService.sendWelcomeEmail(email, name).catch(err => 
+    //   console.error('Welcome email failed:', err)
+    // )
 
     const response = NextResponse.json({
       success: true,
@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
     response.cookies.set('accessToken', tokens.accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      sameSite: 'lax',
       maxAge: 7 * 24 * 60 * 60 // 7 days
     })
 
@@ -87,7 +87,7 @@ export async function POST(request: NextRequest) {
     response.cookies.set('refreshToken', tokens.refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      sameSite: 'lax',
       maxAge: 30 * 24 * 60 * 60 // 30 days
     })
 

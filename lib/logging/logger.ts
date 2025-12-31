@@ -1,25 +1,20 @@
 import pino from 'pino';
 
-// Create a logger instance with safer development configuration
-const logger = pino({
-  level: process.env.LOG_LEVEL || 'info',
-  // Disable worker threads in development to prevent module resolution issues
-  ...(process.env.NODE_ENV !== 'production' ? {
-    // Use sync transport to avoid worker thread issues
-    transport: {
-      target: 'pino-pretty',
-      options: {
-        colorize: true,
-        sync: true // Force synchronous transport
-      }
-    }
-  } : {
-    // Production logging without pretty printing
-    base: {
-      pid: process.pid
-    }
-  })
+// Create a simple console logger to avoid worker thread issues
+const createSimpleLogger = () => ({
+  info: (obj: any) => console.log('[INFO]', obj),
+  error: (obj: any) => console.error('[ERROR]', obj),
+  warn: (obj: any) => console.warn('[WARN]', obj),
+  debug: (obj: any) => console.debug('[DEBUG]', obj)
 });
+
+// Use simple logger in development to avoid worker thread issues
+const logger = process.env.NODE_ENV === 'production'
+  ? pino({
+      level: process.env.LOG_LEVEL || 'info',
+      base: { pid: process.pid }
+    })
+  : createSimpleLogger();
 
 // Error types
 export enum ErrorType {

@@ -1,6 +1,7 @@
 import { ErrorLogger, ErrorType } from '../logging/logger';
 import { SecuritySanitizer } from '../security/sanitizer';
 import { validateObjectId } from '../validations';
+import { ObjectId } from 'mongodb';
 
 /**
  * Database Query Security Service
@@ -44,6 +45,9 @@ export class QuerySecurityService {
             );
             throw new Error(`Invalid ID format for ${key}`);
           }
+        } else if (value instanceof ObjectId) {
+          // Pass through ObjectId instances
+          sanitized[key] = value;
         }
       }
       // Handle nested objects (recursive sanitization)
@@ -184,21 +188,24 @@ export class QuerySecurityService {
    * Log database query for security auditing
    */
   static logQuery(
-    operation: string, 
-    collection: string, 
-    query: Record<string, any>, 
+    operation: string,
+    collection: string,
+    query: Record<string, any>,
     userId?: string
   ): void {
-    ErrorLogger.log(
-      new Error('Database query executed'),
-      ErrorType.INFO,
-      {
-        operation,
-        collection,
-        query: SecuritySanitizer.sanitizeForLogs(JSON.stringify(query)),
-        userId,
-        timestamp: new Date().toISOString()
-      }
-    );
+    // Temporarily disable logging in development to prevent worker thread issues
+    if (process.env.NODE_ENV === 'production') {
+      ErrorLogger.log(
+        new Error('Database query executed'),
+        ErrorType.INFO,
+        {
+          operation,
+          collection,
+          query: SecuritySanitizer.sanitizeForLogs(JSON.stringify(query)),
+          userId,
+          timestamp: new Date().toISOString()
+        }
+      );
+    }
   }
 }
