@@ -205,13 +205,13 @@ export class ContentSetLoader64 {
         if (fs.existsSync(filePath)) {
           const fileContent = fs.readFileSync(filePath, 'utf8');
           
-          // Improved extraction logic for variations
-          const variationsMatch = fileContent.match(/variations:\s*(\[[\s\S]*?\])\s*,?\s*}/);
-          if (variationsMatch && variationsMatch[1]) {
+          // Try to extract default export format `export default { ... }`
+          const defaultMatch = fileContent.match(/export default\s+(\{[\s\S]*\});?/)
+          if (defaultMatch && defaultMatch[1]) {
             try {
               // Using Function instead of eval for safer execution of JS object string
-              const variations = new Function(`return ${variationsMatch[1]}`)();
-              return { variations };
+              const contentSet = new Function(`return ${defaultMatch[1]}`)();
+              return contentSet;
             } catch (parseError) {
               console.error(`Parse error for ${contentKey}:`, parseError);
             }
@@ -219,7 +219,7 @@ export class ContentSetLoader64 {
         }
       }
 
-      // Fallback to API if on client
+      // Fallback to API if on client or file reading failed
       const baseUrl = typeof window !== 'undefined' ? '' : (process.env.APP_URL || 'http://localhost:3000');
       const response = await fetch(`${baseUrl}/api/content-sets/${contentKey}`)
       if (response.ok) {
