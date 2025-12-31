@@ -225,7 +225,7 @@ export class DatabaseService {
       email: validatedData.email.toLowerCase(),
       name: SecuritySanitizer.sanitizeString(validatedData.name),
       role: validatedData.role as 'SENDER' | 'RECEIVER' | 'ADMIN',
-      password: userData.password, // Password is already hashed
+      password: userData.password, // Password is optional for OAuth users
       createdAt: now,
       updatedAt: now,
       _id: new ObjectId()

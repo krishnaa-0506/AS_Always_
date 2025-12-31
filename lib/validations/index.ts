@@ -4,7 +4,7 @@ import { z } from 'zod';
 export const createUserSchema = z.object({
   email: z.string().email('Invalid email format').toLowerCase(),
   name: z.string().min(1, 'Name is required').max(100, 'Name too long'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
+  password: z.string().min(8, 'Password must be at least 8 characters').optional(),
   role: z.enum(['SENDER', 'RECEIVER', 'ADMIN']).default('SENDER')
 });
 
