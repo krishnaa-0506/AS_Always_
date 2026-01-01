@@ -319,25 +319,6 @@ export default function MemoryExperience({ params }: { params: { code: string } 
     }
   }, [currentScreen, isVisible, memoryScreens])
 
-  // Auto advance screens when playing - reduced timing for better readability
-  useEffect(() => {
-    if (isPlaying && memoryScreens.length > 0 && currentScreen < memoryScreens.length - 1) {
-      // Calculate duration based on content length - optimized for 2 lines
-      const currentLines = getCurrentLines()
-      const lineCount = currentLines.length
-      // Much faster: 2 seconds per line, minimum 3 seconds, maximum 8 seconds
-      const finalDuration = Math.min(Math.max(lineCount * 2000, 3000), 8000)
-      
-      const timer = setTimeout(() => {
-        handleNext()
-      }, finalDuration)
-      return () => clearTimeout(timer)
-    } else if (isPlaying && currentScreen === memoryScreens.length - 1) {
-      setIsPlaying(false)
-      setShowControls(true)
-    }
-  }, [isPlaying, currentScreen, memoryScreens])
-
   // Auto-play background music when experience starts or when backgroundMusic changes
   useEffect(() => {
     if (backgroundMusic && isPlaying) {
@@ -519,11 +500,6 @@ export default function MemoryExperience({ params }: { params: { code: string } 
 
       {/* Side Controls - Music and Fullscreen */}
       <div className="fixed right-4 top-1/2 -translate-y-1/2 z-30 flex flex-col gap-3">
-        <img 
-              src="/logo.png" 
-              alt="AsAlways Logo"
-              className="h-8 w-auto object-contain mb-4"
-            />
         <button
           onClick={toggleFullscreen}
           className="p-2 rounded-lg bg-black/60 backdrop-blur-sm hover:bg-black/80 border border-yellow-400/30 transition-all duration-200"
@@ -565,7 +541,7 @@ export default function MemoryExperience({ params }: { params: { code: string } 
                     <div className="absolute inset-0 rounded-lg border border-yellow-300/30"></div>
 
                     {/* Content area */}
-                    <div className="p-6 lg:p-10 xl:p-12">
+                    <div className="p-4 lg:p-6 xl:p-8">
                       {/* Screen indicator */}
                       <div className="text-center mb-4">
                         <span className="text-yellow-400 text-xs font-medium">
@@ -588,7 +564,7 @@ export default function MemoryExperience({ params }: { params: { code: string } 
                                 src={imageUrl}
                                 alt="Memory"
                                 className="w-full max-w-xl mx-auto rounded-lg border-2 border-yellow-400/30 object-cover"
-                                style={{ maxHeight: '300px' }}
+                                style={{ maxHeight: '200px' }}
                               />
                             </div>
                           )}
@@ -600,7 +576,7 @@ export default function MemoryExperience({ params }: { params: { code: string } 
                                 src={currentScreenData.mediaContent!.url}
                                 controls
                                 className="w-full max-w-xl mx-auto rounded-lg border-2 border-yellow-400/30"
-                                style={{ maxHeight: '300px' }}
+                                style={{ maxHeight: '200px' }}
                               >
                                 Your browser does not support the video tag.
                               </video>
@@ -619,7 +595,7 @@ export default function MemoryExperience({ params }: { params: { code: string } 
                               animate={{ opacity: 1, y: 0 }}
                               exit={{ opacity: 0, y: -10 }}
                               transition={{ duration: 0.6, ease: "easeOut" }}
-                              className="text-white text-base sm:text-lg lg:text-xl font-serif italic leading-snug tracking-wide break-words"
+                              className="text-white text-sm sm:text-base md:text-lg font-serif italic leading-snug tracking-wide break-words"
                               style={{
                                 fontFamily: 'Playfair Display, serif',
                                 textShadow: '0 0 20px rgba(255, 255, 255, 0.1)'

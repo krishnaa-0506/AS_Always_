@@ -129,6 +129,16 @@ export default function CompactMemoryPreview({
     }
   }, [selectedSong])
 
+  // Cleanup background music on unmount
+  useEffect(() => {
+    return () => {
+      if (backgroundMusic) {
+        backgroundMusic.pause()
+        backgroundMusic.currentTime = 0
+      }
+    }
+  }, [backgroundMusic])
+
   // Auto advance screens when playing
   useEffect(() => {
     if (isPlaying && Array.isArray(content) && content.length > 0 && currentScreen < content.length - 1) {
