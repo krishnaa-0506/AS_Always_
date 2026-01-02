@@ -77,25 +77,12 @@ export default function MemoryExperience({ params }: { params: { code: string } 
     return contentString.split('\n').filter(line => line.trim().length > 0)
   }
 
-  // Dynamic box sizing based on content and screen size
+  // Dynamic box sizing based on line count
   const getBoxHeight = () => {
     const lineCount = getCurrentLines().length
-    const hasMedia = hasImage || hasVideo
-    const isMobile = window.innerWidth < 768
-
-    // Adjust for media presence and screen size
-    if (isMobile) {
-      if (hasMedia) {
-        return lineCount <= 3 ? 'min-h-[350px]' : lineCount <= 5 ? 'min-h-[400px]' : 'min-h-[450px]'
-      }
-      return lineCount <= 3 ? 'min-h-[250px]' : lineCount <= 5 ? 'min-h-[300px]' : 'min-h-[350px]'
-    }
-
-    // Desktop sizing
-    if (hasMedia) {
-      return lineCount <= 4 ? 'min-h-[400px]' : lineCount <= 6 ? 'min-h-[450px]' : 'min-h-[500px]'
-    }
-    return lineCount <= 4 ? 'min-h-[300px]' : lineCount <= 6 ? 'min-h-[350px]' : 'min-h-[400px]'
+    if (lineCount <= 5) return 'min-h-[400px]'
+    if (lineCount <= 7) return 'min-h-[500px]'
+    return 'min-h-[600px]'
   }
 
   const toggleFullscreen = () => {
@@ -498,6 +485,415 @@ export default function MemoryExperience({ params }: { params: { code: string } 
       {/* Floating Icons */}
       <PreviewFloatingIcons screenIndex={currentScreen} />
 
+      {/* Enhanced Floating Animations */}
+      {/* Floating Hearts */}
+      <motion.div
+        className="absolute top-20 left-10 text-4xl opacity-60"
+        animate={{
+          y: [0, -20, 0],
+          rotate: [0, 10, -10, 0],
+          scale: [1, 1.1, 1]
+        }}
+        transition={{
+          duration: 4,
+          repeat: Infinity,
+          ease: "easeInOut"
+        }}
+      >
+        💖
+      </motion.div>
+
+      <motion.div
+        className="absolute top-32 right-16 text-3xl opacity-50"
+        animate={{
+          y: [0, -15, 0],
+          x: [0, 5, -5, 0],
+          rotate: [0, -15, 15, 0]
+        }}
+        transition={{
+          duration: 5,
+          repeat: Infinity,
+          ease: "easeInOut",
+          delay: 1
+        }}
+      >
+        💕
+      </motion.div>
+
+      <motion.div
+        className="absolute bottom-40 left-20 text-2xl opacity-40"
+        animate={{
+          y: [0, -10, 0],
+          scale: [1, 1.2, 1],
+          rotate: [0, 180, 360]
+        }}
+        transition={{
+          duration: 6,
+          repeat: Infinity,
+          ease: "easeInOut",
+          delay: 2
+        }}
+      >
+        ✨
+      </motion.div>
+
+      {/* Floating Geometric Shapes */}
+      <motion.div
+        className="absolute top-1/4 left-1/4 w-16 h-16 border-2 border-white/20 rounded-full"
+        animate={{
+          rotate: [0, 360],
+          scale: [1, 1.2, 1],
+          opacity: [0.3, 0.6, 0.3]
+        }}
+        transition={{
+          duration: 8,
+          repeat: Infinity,
+          ease: "linear"
+        }}
+      />
+
+      <motion.div
+        className="absolute top-3/4 right-1/3 w-12 h-12 border-2 border-yellow-400/30 rotate-45"
+        animate={{
+          rotate: [45, 225, 405],
+          scale: [1, 0.8, 1],
+          opacity: [0.4, 0.8, 0.4]
+        }}
+        transition={{
+          duration: 6,
+          repeat: Infinity,
+          ease: "easeInOut",
+          delay: 1
+        }}
+      />
+
+      <motion.div
+        className="absolute bottom-1/4 left-1/3 w-20 h-20 border border-pink-400/20 rounded-lg"
+        animate={{
+          rotate: [0, 90, 180, 270, 360],
+          scale: [1, 1.3, 1],
+          opacity: [0.2, 0.5, 0.2]
+        }}
+        transition={{
+          duration: 10,
+          repeat: Infinity,
+          ease: "easeInOut",
+          delay: 0.5
+        }}
+      />
+
+      {/* Pulsing Orbs */}
+      <motion.div
+        className="absolute top-1/3 right-10 w-6 h-6 bg-gradient-to-r from-pink-400 to-purple-500 rounded-full blur-sm"
+        animate={{
+          scale: [1, 2, 1],
+          opacity: [0.6, 1, 0.6]
+        }}
+        transition={{
+          duration: 3,
+          repeat: Infinity,
+          ease: "easeInOut"
+        }}
+      />
+
+      <motion.div
+        className="absolute bottom-1/3 left-10 w-8 h-8 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full blur-sm"
+        animate={{
+          scale: [1, 1.5, 1],
+          opacity: [0.5, 0.9, 0.5]
+        }}
+        transition={{
+          duration: 4,
+          repeat: Infinity,
+          ease: "easeInOut",
+          delay: 1
+        }}
+      />
+
+      <motion.div
+        className="absolute top-2/3 right-1/4 w-4 h-4 bg-gradient-to-r from-blue-400 to-cyan-500 rounded-full blur-sm"
+        animate={{
+          scale: [1, 1.8, 1],
+          opacity: [0.7, 1, 0.7]
+        }}
+        transition={{
+          duration: 2.5,
+          repeat: Infinity,
+          ease: "easeInOut",
+          delay: 0.5
+        }}
+      />
+
+      {/* Floating Emojis */}
+      <motion.div
+        className="absolute top-16 right-1/3 text-2xl opacity-60"
+        animate={{
+          y: [0, -25, 0],
+          rotate: [0, 20, -20, 0],
+          scale: [1, 1.2, 1]
+        }}
+        transition={{
+          duration: 7,
+          repeat: Infinity,
+          ease: "easeInOut"
+        }}
+      >
+        🌟
+      </motion.div>
+
+      <motion.div
+        className="absolute bottom-20 right-20 text-xl opacity-50"
+        animate={{
+          y: [0, -15, 0],
+          x: [0, 10, -10, 0],
+          rotate: [0, -25, 25, 0]
+        }}
+        transition={{
+          duration: 8,
+          repeat: Infinity,
+          ease: "easeInOut",
+          delay: 1.5
+        }}
+      >
+        💫
+      </motion.div>
+
+      <motion.div
+        className="absolute top-1/2 left-5 text-lg opacity-40"
+        animate={{
+          y: [0, -20, 0],
+          scale: [1, 1.3, 1],
+          rotate: [0, 360]
+        }}
+        transition={{
+          duration: 9,
+          repeat: Infinity,
+          ease: "easeInOut",
+          delay: 2.5
+        }}
+      >
+        🌸
+      </motion.div>
+
+      {/* Wave Animation Background */}
+      <motion.div
+        className="absolute inset-0 pointer-events-none"
+        animate={{
+          background: [
+            'radial-gradient(circle at 20% 50%, rgba(255,255,255,0.05) 0%, transparent 50%)',
+            'radial-gradient(circle at 80% 20%, rgba(255,255,255,0.05) 0%, transparent 50%)',
+            'radial-gradient(circle at 40% 80%, rgba(255,255,255,0.05) 0%, transparent 50%)',
+            'radial-gradient(circle at 20% 50%, rgba(255,255,255,0.05) 0%, transparent 50%)'
+          ]
+        }}
+        transition={{
+          duration: 12,
+          repeat: Infinity,
+          ease: "easeInOut"
+        }}
+      />
+
+      {/* Floating Particles */}
+      {Array.from({ length: 8 }).map((_, i) => (
+        <motion.div
+          key={i}
+          className="absolute w-1 h-1 bg-white/30 rounded-full"
+          style={{
+            left: `${10 + i * 10}%`,
+            top: `${20 + (i % 3) * 20}%`
+          }}
+          animate={{
+            y: [0, -100, 0],
+            opacity: [0, 1, 0],
+            scale: [0, 1, 0]
+          }}
+          transition={{
+            duration: 4 + i * 0.5,
+            repeat: Infinity,
+            ease: "easeOut",
+            delay: i * 0.3
+          }}
+        />
+      ))}
+
+      {/* Rotating Rings */}
+      <motion.div
+        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-32 h-32 border border-white/10 rounded-full"
+        animate={{
+          rotate: [0, 360],
+          scale: [1, 1.1, 1]
+        }}
+        transition={{
+          duration: 20,
+          repeat: Infinity,
+          ease: "linear"
+        }}
+      />
+
+      <motion.div
+        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-48 h-48 border border-yellow-400/5 rounded-full"
+        animate={{
+          rotate: [360, 0],
+          scale: [1, 0.9, 1]
+        }}
+        transition={{
+          duration: 25,
+          repeat: Infinity,
+          ease: "linear"
+        }}
+      />
+
+      {/* Dynamic Burst Effects */}
+      <motion.div
+        className="absolute top-1/4 left-1/4"
+        animate={{
+          scale: [0, 1.5, 0],
+          opacity: [0, 0.8, 0],
+          rotate: [0, 180, 360]
+        }}
+        transition={{
+          duration: 3,
+          repeat: Infinity,
+          ease: "easeOut",
+          delay: currentScreen * 0.5
+        }}
+      >
+        <div className="w-8 h-8 bg-gradient-to-r from-pink-500 to-rose-500 rounded-full blur-md" />
+      </motion.div>
+
+      <motion.div
+        className="absolute bottom-1/4 right-1/4"
+        animate={{
+          scale: [0, 2, 0],
+          opacity: [0, 0.6, 0],
+          rotate: [0, -180, -360]
+        }}
+        transition={{
+          duration: 4,
+          repeat: Infinity,
+          ease: "easeOut",
+          delay: currentScreen * 0.3 + 1
+        }}
+      >
+        <div className="w-6 h-6 bg-gradient-to-r from-purple-500 to-indigo-500 rounded-full blur-md" />
+      </motion.div>
+
+      {/* Floating Butterflies/Elements */}
+      <motion.div
+        className="absolute text-3xl opacity-30"
+        style={{
+          left: `${20 + (currentScreen % 3) * 15}%`,
+          top: `${30 + (currentScreen % 2) * 20}%`
+        }}
+        animate={{
+          x: [0, 50, -30, 0],
+          y: [0, -40, 20, 0],
+          rotate: [0, 15, -15, 0],
+          scale: [1, 1.2, 0.8, 1]
+        }}
+        transition={{
+          duration: 8,
+          repeat: Infinity,
+          ease: "easeInOut"
+        }}
+      >
+        🦋
+      </motion.div>
+
+      <motion.div
+        className="absolute text-2xl opacity-40"
+        style={{
+          right: `${15 + (currentScreen % 4) * 10}%`,
+          bottom: `${25 + (currentScreen % 3) * 15}%`
+        }}
+        animate={{
+          x: [0, -40, 25, 0],
+          y: [0, 35, -20, 0],
+          rotate: [0, -20, 20, 0],
+          scale: [1, 0.9, 1.1, 1]
+        }}
+        transition={{
+          duration: 9,
+          repeat: Infinity,
+          ease: "easeInOut",
+          delay: 1
+        }}
+      >
+        🌺
+      </motion.div>
+
+      {/* Animated Lines/Waves */}
+      <motion.div
+        className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+        animate={{
+          x: [-100, 100],
+          opacity: [0, 1, 0]
+        }}
+        transition={{
+          duration: 5,
+          repeat: Infinity,
+          ease: "easeInOut",
+          delay: currentScreen * 0.2
+        }}
+      />
+
+      <motion.div
+        className="absolute bottom-0 right-0 w-full h-1 bg-gradient-to-l from-transparent via-yellow-400/20 to-transparent"
+        animate={{
+          x: [100, -100],
+          opacity: [0, 1, 0]
+        }}
+        transition={{
+          duration: 6,
+          repeat: Infinity,
+          ease: "easeInOut",
+          delay: currentScreen * 0.3 + 1
+        }}
+      />
+
+      {/* Pulsing Background Elements */}
+      <motion.div
+        className="absolute inset-0 pointer-events-none"
+        animate={{
+          background: [
+            'radial-gradient(circle at 30% 40%, rgba(255,255,255,0.03) 0%, transparent 40%)',
+            'radial-gradient(circle at 70% 60%, rgba(255,255,255,0.03) 0%, transparent 40%)',
+            'radial-gradient(circle at 50% 80%, rgba(255,255,255,0.03) 0%, transparent 40%)',
+            'radial-gradient(circle at 30% 40%, rgba(255,255,255,0.03) 0%, transparent 40%)'
+          ]
+        }}
+        transition={{
+          duration: 15,
+          repeat: Infinity,
+          ease: "easeInOut"
+        }}
+      />
+
+      {/* Floating Sparkle Effects */}
+      {Array.from({ length: 12 }).map((_, i) => (
+        <motion.div
+          key={`sparkle-${i}`}
+          className="absolute text-lg opacity-60"
+          style={{
+            left: `${5 + (i * 8) % 90}%`,
+            top: `${10 + (i * 12) % 80}%`
+          }}
+          animate={{
+            scale: [0, 1, 0],
+            rotate: [0, 180, 360],
+            opacity: [0, 1, 0]
+          }}
+          transition={{
+            duration: 3 + (i * 0.2),
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: i * 0.4
+          }}
+        >
+          ✨
+        </motion.div>
+      ))}
+
       {/* Side Controls - Music and Fullscreen */}
       <div className="fixed right-4 top-1/2 -translate-y-1/2 z-30 flex flex-col gap-3">
         <button
@@ -527,7 +923,7 @@ export default function MemoryExperience({ params }: { params: { code: string } 
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 1.05 }}
                 transition={{ duration: 0.5 }}
-                className={`${getBoxHeight()} flex flex-col justify-center`}
+                className={`${hasImage || hasVideo ? 'min-h-[600px]' : 'min-h-[400px]'} flex flex-col justify-center`}
               >
                 {/* Golden Border Letter Box */}
                 <div className="relative">
@@ -543,13 +939,13 @@ export default function MemoryExperience({ params }: { params: { code: string } 
                     {/* Content area */}
                     <div className="p-4 lg:p-6 xl:p-8">
                       {/* Screen indicator */}
-                      <div className="text-center mb-4">
+                      <div className={`text-center ${hasImage || hasVideo ? 'mb-2' : 'mb-4'}`}>
                         <span className="text-yellow-400 text-xs font-medium">
                           Screen {currentScreen + 1} of {memoryScreens.length}
                         </span>
                       </div>
 
-                      {/* Media Display Section - More compact layout */}
+                      {/* Media Display Section */}
                       {(hasImage || hasVideo) && (
                         <motion.div
                           initial={{ opacity: 0, scale: 0.9 }}
@@ -557,32 +953,26 @@ export default function MemoryExperience({ params }: { params: { code: string } 
                           transition={{ delay: 0.2 }}
                           className="mb-3"
                         >
-                          {/* Image - Responsive sizing */}
+                          {/* Image */}
                           {hasImage && imageUrl && (
-                            <div className="mb-3">
+                            <div className="mb-2">
                               <img
                                 src={imageUrl}
                                 alt="Memory"
-                                className="w-full max-w-2xl mx-auto rounded-lg border-2 border-yellow-400/30 object-contain"
-                                style={{
-                                  maxHeight: window.innerWidth < 768 ? '250px' : '350px',
-                                  height: 'auto'
-                                }}
+                                className="w-full h-full max-w-3xl mx-auto rounded-lg border-2 border-yellow-400/30 object-contain"
+                                style={{ maxHeight: '350px' }}
                               />
                             </div>
                           )}
 
-                          {/* Video - Responsive sizing */}
+                          {/* Video */}
                           {hasVideo && (
-                            <div className="mb-3">
+                            <div className="mb-2">
                               <video
                                 src={currentScreenData.mediaContent!.url}
                                 controls
-                                className="w-full max-w-2xl mx-auto rounded-lg border-2 border-yellow-400/30 object-contain"
-                                style={{
-                                  maxHeight: window.innerWidth < 768 ? '250px' : '350px',
-                                  height: 'auto'
-                                }}
+                                className="w-full h-full max-w-3xl mx-auto rounded-lg border-2 border-yellow-400/30 object-contain"
+                                style={{ maxHeight: '350px' }}
                               >
                                 Your browser does not support the video tag.
                               </video>
@@ -591,8 +981,8 @@ export default function MemoryExperience({ params }: { params: { code: string } 
                         </motion.div>
                       )}
 
-                      {/* Animated Text Content - More compact and responsive */}
-                      <div className="text-center space-y-2">
+                      {/* Animated Text Content - Adjusted for media */}
+                      <div className={`text-center ${hasImage || hasVideo ? 'space-y-2' : 'space-y-3'}`}>
                         <AnimatePresence>
                           {revealedLines.map((line, index) => (
                             <motion.p
@@ -601,11 +991,14 @@ export default function MemoryExperience({ params }: { params: { code: string } 
                               animate={{ opacity: 1, y: 0 }}
                               exit={{ opacity: 0, y: -10 }}
                               transition={{ duration: 0.6, ease: "easeOut" }}
-                              className="text-white text-xs sm:text-sm md:text-base font-serif italic leading-snug tracking-wide break-words"
+                              className={`text-white font-serif italic leading-snug tracking-wide break-words ${
+                                hasImage || hasVideo
+                                  ? 'text-xs sm:text-sm md:text-base'
+                                  : 'text-sm sm:text-base md:text-lg'
+                              }`}
                               style={{
                                 fontFamily: 'Playfair Display, serif',
-                                textShadow: '0 0 20px rgba(255, 255, 255, 0.1)',
-                                lineHeight: window.innerWidth < 768 ? '1.4' : '1.6'
+                                textShadow: '0 0 20px rgba(255, 255, 255, 0.1)'
                               }}
                             >
                               {line}
@@ -622,80 +1015,51 @@ export default function MemoryExperience({ params }: { params: { code: string } 
         </div>
       </div>
 
-      {/* Enhanced Controls - Compact at bottom */}
-      <motion.div 
-        className="fixed bottom-0 left-0 right-0 z-20 bg-black/80 backdrop-blur-sm border-t border-yellow-400/20 p-4"
-        initial={{ y: 100, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.5, duration: 0.5 }}
-      >
-        {/* Navigation Controls - Enhanced */}
+      {/* Controls - Compact at bottom */}
+      <div className="fixed bottom-0 left-0 right-0 z-20 bg-black/80 backdrop-blur-sm border-t border-yellow-400/20 p-4">
+        {/* Navigation Controls - Compact */}
         <div className="flex items-center justify-center space-x-3 mb-3">
-          <motion.button
+          <button
             onClick={handlePrev}
             disabled={currentScreen === 0}
             className="p-2 rounded-full bg-yellow-400/20 hover:bg-yellow-400/30 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
           >
             <ChevronLeft className="w-5 h-5 text-yellow-400" />
-          </motion.button>
+          </button>
 
-          <motion.button
+          <button
             onClick={pauseExperience}
-            className="p-3 rounded-full bg-yellow-400 hover:bg-yellow-500 transition-all duration-200 shadow-lg relative overflow-hidden"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+            className="p-3 rounded-full bg-yellow-400 hover:bg-yellow-500 transition-all duration-200 shadow-lg"
           >
-            <motion.div
-              className="absolute inset-0 bg-gradient-to-r from-yellow-300 to-yellow-500 rounded-full"
-              animate={{
-                opacity: [0.5, 1, 0.5],
-              }}
-              transition={{
-                duration: 2,
-                repeat: Infinity,
-              }}
-            />
             {isPlaying ? (
-              <Pause className="w-5 h-5 text-black relative z-10" />
+              <Pause className="w-5 h-5 text-black" />
             ) : (
-              <Play className="w-5 h-5 text-black relative z-10" />
+              <Play className="w-5 h-5 text-black" />
             )}
-          </motion.button>
+          </button>
 
-          <motion.button
+          <button
             onClick={handleNext}
             disabled={memoryScreens.length > 0 ? currentScreen === memoryScreens.length - 1 : true}
             className="p-2 rounded-full bg-yellow-400/20 hover:bg-yellow-400/30 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
           >
             <ChevronRight className="w-5 h-5 text-yellow-400" />
-          </motion.button>
+          </button>
         </div>
 
-        {/* Enhanced Progress Indicator */}
+        {/* Progress Indicator - Compact */}
         <div className="flex justify-center space-x-1">
           {Array.from({ length: memoryScreens.length }, (_, i) => (
-            <motion.div
+            <div
               key={i}
               className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${
                 i === currentScreen ? 'bg-yellow-400 scale-125' :
                 i < currentScreen ? 'bg-yellow-400/60' : 'bg-white/30'
               }`}
-              animate={i === currentScreen ? {
-                scale: [1, 1.25, 1],
-                opacity: [1, 0.8, 1],
-              } : {}}
-              transition={{
-                duration: 1.5,
-                repeat: i === currentScreen ? Infinity : 0,
-              }}
             />
           ))}
         </div>
-      </motion.div>
+      </div>
 
       {/* Completion Overlay */}
       {showControls && currentScreen === memoryScreens.length - 1 && (

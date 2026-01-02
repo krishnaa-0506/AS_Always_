@@ -161,72 +161,55 @@ export class DatabaseService {
   }
 
   async connect(): Promise<Db> {
-    // If we already have a valid connection, return it
-    if (this.db && this._client) {
-      try {
-        // Test the connection is still alive
-        await this.db.admin().ping();
-        return this.db;
-      } catch (error) {
-        // Connection is dead, reset and reconnect
-        console.log('Existing connection is dead, reconnecting...');
-        this.db = null;
-        this._client = null;
-      }
-    }
-
-    this.connectionAttempts = 0;
-
-    while (this.connectionAttempts < this.maxRetries) {
-      try {
-        this.connectionAttempts++;
-
-        // Log connection attempt for security monitoring
-        ErrorLogger.log(
-          new Error('Database connection attempt'),
-          ErrorType.INFO,
-          {
-            attempt: this.connectionAttempts,
-            maxRetries: this.maxRetries,
-            timestamp: new Date().toISOString()
+    if (!this.db) {
+      this.connectionAttempts = 0;
+      
+      while (this.connectionAttempts < this.maxRetries) {
+        try {
+          this.connectionAttempts++;
+          
+          // Log connection attempt for security monitoring
+          ErrorLogger.log(
+            new Error('Database connection attempt'),
+            ErrorType.INFO,
+            {
+              attempt: this.connectionAttempts,
+              maxRetries: this.maxRetries,
+              timestamp: new Date().toISOString()
+            }
+          );
+          
+          this.db = await getDatabase();
+          this._client = await clientPromise; // Store client reference
+          console.log('MongoDB connected successfully');
+          
+          // Reset attempts counter on successful connection
+          this.connectionAttempts = 0;
+          break;
+        } catch (error) {
+          ErrorLogger.log(
+            error instanceof Error ? error : new Error('Connection attempt failed'),
+            ErrorType.DATABASE,
+            {
+              attempt: this.connectionAttempts,
+              retriesLeft: this.maxRetries - this.connectionAttempts,
+              nextRetryIn: this.connectionAttempts < this.maxRetries ? this.retryDelay : 0
+            }
+          );
+          
+          console.error(`MongoDB connection attempt ${this.connectionAttempts} failed. Retries left: ${this.maxRetries - this.connectionAttempts}`, error);
+          
+          if (this.connectionAttempts >= this.maxRetries) {
+            console.error('Failed to connect to MongoDB after maximum attempts');
+            // Don't throw error for analytics, just return null connection
+            return null as any;
           }
-        );
-
-        // Ensure clientPromise is resolved
-        const client = await clientPromise;
-        this._client = client;
-        this.db = client.db('asalways');
-
-        // Test the connection
-        await this.db.admin().ping();
-        console.log('MongoDB connected successfully');
-
-        // Reset attempts counter on successful connection
-        this.connectionAttempts = 0;
-        return this.db;
-      } catch (error) {
-        ErrorLogger.log(
-          error instanceof Error ? error : new Error('Connection attempt failed'),
-          ErrorType.DATABASE,
-          {
-            attempt: this.connectionAttempts,
-            retriesLeft: this.maxRetries - this.connectionAttempts,
-            nextRetryIn: this.connectionAttempts < this.maxRetries ? this.retryDelay : 0
-          }
-        );
-
-        console.error(`MongoDB connection attempt ${this.connectionAttempts} failed. Retries left: ${this.maxRetries - this.connectionAttempts}`, error);
-
-        if (this.connectionAttempts >= this.maxRetries) {
-          console.error('Failed to connect to MongoDB after maximum attempts');
-          throw new Error(`Database connection failed after ${this.maxRetries} attempts: ${error instanceof Error ? error.message : 'Unknown error'}`);
+          
+          await new Promise(resolve => setTimeout(resolve, this.retryDelay * this.connectionAttempts));
         }
-
-        await new Promise(resolve => setTimeout(resolve, this.retryDelay * this.connectionAttempts));
       }
     }
-
-    throw new Error('Database connection failed');
+    return this.db!;
   }
 
   // User operations
