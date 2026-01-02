@@ -62,6 +62,13 @@ export default function SenderDashboard() {
     fetchUser();
   }, [router]);
 
+  // Listen for help event from navigation
+  useEffect(() => {
+    const handleShowHelp = () => setShowTips(true)
+    window.addEventListener('showHelp', handleShowHelp)
+    return () => window.removeEventListener('showHelp', handleShowHelp)
+  }, [])
+
   const fetchUserStats = async (userId: string) => {
     try {
       const response = await fetch(`/api/messages?userId=${userId}`)
@@ -208,33 +215,6 @@ export default function SenderDashboard() {
                 <p className="text-white/70 font-soft text-base sm:text-lg">
                   Create unforgettable memories for your loved ones
                 </p>
-              </div>
-
-              <div className="flex gap-3">
-                <motion.button
-                  onClick={() => setShowTips(true)}
-                  className="btn-secondary"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  Help / Tips
-                </motion.button>
-                <motion.button
-                  onClick={handleLogout}
-                  className="btn-secondary"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  Logout
-                </motion.button>
-                <motion.button
-                  onClick={handleSwitchRole}
-                  className="btn-secondary"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  Switch to Receiver
-                </motion.button>
               </div>
             </div>
           </motion.div>

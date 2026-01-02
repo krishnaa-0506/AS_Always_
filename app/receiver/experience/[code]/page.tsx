@@ -77,12 +77,25 @@ export default function MemoryExperience({ params }: { params: { code: string } 
     return contentString.split('\n').filter(line => line.trim().length > 0)
   }
 
-  // Dynamic box sizing based on line count
+  // Dynamic box sizing based on content and screen size
   const getBoxHeight = () => {
     const lineCount = getCurrentLines().length
-    if (lineCount <= 5) return 'min-h-[400px]'
-    if (lineCount <= 7) return 'min-h-[500px]'
-    return 'min-h-[600px]'
+    const hasMedia = hasImage || hasVideo
+    const isMobile = window.innerWidth < 768
+
+    // Adjust for media presence and screen size
+    if (isMobile) {
+      if (hasMedia) {
+        return lineCount <= 3 ? 'min-h-[350px]' : lineCount <= 5 ? 'min-h-[400px]' : 'min-h-[450px]'
+      }
+      return lineCount <= 3 ? 'min-h-[250px]' : lineCount <= 5 ? 'min-h-[300px]' : 'min-h-[350px]'
+    }
+
+    // Desktop sizing
+    if (hasMedia) {
+      return lineCount <= 4 ? 'min-h-[400px]' : lineCount <= 6 ? 'min-h-[450px]' : 'min-h-[500px]'
+    }
+    return lineCount <= 4 ? 'min-h-[300px]' : lineCount <= 6 ? 'min-h-[350px]' : 'min-h-[400px]'
   }
 
   const toggleFullscreen = () => {
@@ -198,39 +211,26 @@ export default function MemoryExperience({ params }: { params: { code: string } 
               }
             })
             
-            // Handle video memories separately (videos are not distributed like images)
+            // Handle video memories separately - add them as separate screens at the end
             const videoMemories = (result.message.memories || []).filter((m: any) => m.type === 'VIDEO')
             if (videoMemories.length > 0) {
-              const insertedScreens: MemoryScreen[] = []
-              const insertInterval = Math.max(3, Math.floor(realScreens.length / (videoMemories.length + 1)))
-              
-              let videoIdx = 0
-              for (let i = 0; i < realScreens.length; i++) {
-                insertedScreens.push(realScreens[i])
-                
-                // Insert video screens every few screens
-                if ((i + 1) % insertInterval === 0 && videoIdx < videoMemories.length) {
-                  const video = videoMemories[videoIdx]
-                  insertedScreens.push({
-                    id: 2000 + videoIdx,
-                    type: 'video' as const,
-                    content: video.caption || `A special memory shared by ${result.message.senderName}`,
-                    background: 'from-pink-500 to-purple-600',
-                    animation: 'fadeIn',
-                    duration: 8000,
-                    emotion: 'love',
-                    mediaContent: {
-                      type: 'video',
-                      url: video.content,
-                      filename: video.filename,
-                      caption: video.caption
-                    }
-                  })
-                  videoIdx++
+              const videoScreens = videoMemories.map((video: any, index: number) => ({
+                id: 1000 + index,
+                type: 'video' as const,
+                content: video.caption || `A special memory shared by ${result.message.senderName}`,
+                background: 'from-pink-500 to-purple-600',
+                animation: 'fadeIn',
+                duration: 8000,
+                emotion: 'love',
+                mediaContent: {
+                  type: 'video',
+                  url: video.content,
+                  filename: video.filename,
+                  caption: video.caption
                 }
-              }
+              }))
               
-              setMemoryScreens(insertedScreens)
+              setMemoryScreens([...realScreens, ...videoScreens])
             } else {
               setMemoryScreens(realScreens)
             }
@@ -549,34 +549,40 @@ export default function MemoryExperience({ params }: { params: { code: string } 
                         </span>
                       </div>
 
-                      {/* Media Display Section */}
+                      {/* Media Display Section - More compact layout */}
                       {(hasImage || hasVideo) && (
                         <motion.div
                           initial={{ opacity: 0, scale: 0.9 }}
                           animate={{ opacity: 1, scale: 1 }}
                           transition={{ delay: 0.2 }}
-                          className="mb-6"
+                          className="mb-3"
                         >
-                          {/* Image */}
+                          {/* Image - Responsive sizing */}
                           {hasImage && imageUrl && (
-                            <div className="mb-4">
+                            <div className="mb-3">
                               <img
                                 src={imageUrl}
                                 alt="Memory"
-                                className="w-full max-w-xl mx-auto rounded-lg border-2 border-yellow-400/30 object-cover"
-                                style={{ maxHeight: '200px' }}
+                                className="w-full max-w-2xl mx-auto rounded-lg border-2 border-yellow-400/30 object-contain"
+                                style={{
+                                  maxHeight: window.innerWidth < 768 ? '250px' : '350px',
+                                  height: 'auto'
+                                }}
                               />
                             </div>
                           )}
 
-                          {/* Video */}
+                          {/* Video - Responsive sizing */}
                           {hasVideo && (
-                            <div className="mb-4">
+                            <div className="mb-3">
                               <video
                                 src={currentScreenData.mediaContent!.url}
                                 controls
-                                className="w-full max-w-xl mx-auto rounded-lg border-2 border-yellow-400/30"
-                                style={{ maxHeight: '200px' }}
+                                className="w-full max-w-2xl mx-auto rounded-lg border-2 border-yellow-400/30 object-contain"
+                                style={{
+                                  maxHeight: window.innerWidth < 768 ? '250px' : '350px',
+                                  height: 'auto'
+                                }}
                               >
                                 Your browser does not support the video tag.
                               </video>
@@ -585,8 +591,8 @@ export default function MemoryExperience({ params }: { params: { code: string } 
                         </motion.div>
                       )}
 
-                      {/* Animated Text Content - Reduced font size */}
-                      <div className="text-center space-y-3">
+                      {/* Animated Text Content - More compact and responsive */}
+                      <div className="text-center space-y-2">
                         <AnimatePresence>
                           {revealedLines.map((line, index) => (
                             <motion.p
@@ -595,10 +601,11 @@ export default function MemoryExperience({ params }: { params: { code: string } 
                               animate={{ opacity: 1, y: 0 }}
                               exit={{ opacity: 0, y: -10 }}
                               transition={{ duration: 0.6, ease: "easeOut" }}
-                              className="text-white text-sm sm:text-base md:text-lg font-serif italic leading-snug tracking-wide break-words"
+                              className="text-white text-xs sm:text-sm md:text-base font-serif italic leading-snug tracking-wide break-words"
                               style={{
                                 fontFamily: 'Playfair Display, serif',
-                                textShadow: '0 0 20px rgba(255, 255, 255, 0.1)'
+                                textShadow: '0 0 20px rgba(255, 255, 255, 0.1)',
+                                lineHeight: window.innerWidth < 768 ? '1.4' : '1.6'
                               }}
                             >
                               {line}
@@ -615,51 +622,80 @@ export default function MemoryExperience({ params }: { params: { code: string } 
         </div>
       </div>
 
-      {/* Controls - Compact at bottom */}
-      <div className="fixed bottom-0 left-0 right-0 z-20 bg-black/80 backdrop-blur-sm border-t border-yellow-400/20 p-4">
-        {/* Navigation Controls - Compact */}
+      {/* Enhanced Controls - Compact at bottom */}
+      <motion.div 
+        className="fixed bottom-0 left-0 right-0 z-20 bg-black/80 backdrop-blur-sm border-t border-yellow-400/20 p-4"
+        initial={{ y: 100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.5, duration: 0.5 }}
+      >
+        {/* Navigation Controls - Enhanced */}
         <div className="flex items-center justify-center space-x-3 mb-3">
-          <button
+          <motion.button
             onClick={handlePrev}
             disabled={currentScreen === 0}
             className="p-2 rounded-full bg-yellow-400/20 hover:bg-yellow-400/30 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
           >
             <ChevronLeft className="w-5 h-5 text-yellow-400" />
-          </button>
+          </motion.button>
 
-          <button
+          <motion.button
             onClick={pauseExperience}
-            className="p-3 rounded-full bg-yellow-400 hover:bg-yellow-500 transition-all duration-200 shadow-lg"
+            className="p-3 rounded-full bg-yellow-400 hover:bg-yellow-500 transition-all duration-200 shadow-lg relative overflow-hidden"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
+            <motion.div
+              className="absolute inset-0 bg-gradient-to-r from-yellow-300 to-yellow-500 rounded-full"
+              animate={{
+                opacity: [0.5, 1, 0.5],
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+              }}
+            />
             {isPlaying ? (
-              <Pause className="w-5 h-5 text-black" />
+              <Pause className="w-5 h-5 text-black relative z-10" />
             ) : (
-              <Play className="w-5 h-5 text-black" />
+              <Play className="w-5 h-5 text-black relative z-10" />
             )}
-          </button>
+          </motion.button>
 
-          <button
+          <motion.button
             onClick={handleNext}
             disabled={memoryScreens.length > 0 ? currentScreen === memoryScreens.length - 1 : true}
             className="p-2 rounded-full bg-yellow-400/20 hover:bg-yellow-400/30 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
           >
             <ChevronRight className="w-5 h-5 text-yellow-400" />
-          </button>
+          </motion.button>
         </div>
 
-        {/* Progress Indicator - Compact */}
+        {/* Enhanced Progress Indicator */}
         <div className="flex justify-center space-x-1">
           {Array.from({ length: memoryScreens.length }, (_, i) => (
-            <div
+            <motion.div
               key={i}
               className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${
                 i === currentScreen ? 'bg-yellow-400 scale-125' :
                 i < currentScreen ? 'bg-yellow-400/60' : 'bg-white/30'
               }`}
+              animate={i === currentScreen ? {
+                scale: [1, 1.25, 1],
+                opacity: [1, 0.8, 1],
+              } : {}}
+              transition={{
+                duration: 1.5,
+                repeat: i === currentScreen ? Infinity : 0,
+              }}
             />
           ))}
         </div>
-      </div>
+      </motion.div>
 
       {/* Completion Overlay */}
       {showControls && currentScreen === memoryScreens.length - 1 && (
